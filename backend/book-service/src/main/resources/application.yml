@@ -1,0 +1,10 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: book-service
+  data:
+    mongodb:
+      uri: mongodb://root:All4one7!@192.168.1.83:27017/book_catalog?authSource=admin
+
