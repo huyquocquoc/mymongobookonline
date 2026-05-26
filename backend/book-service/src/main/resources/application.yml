@@ -8,3 +8,8 @@ spring:
     mongodb:
       uri: mongodb://root:All4one7!@192.168.1.83:27017/book_catalog?authSource=admin
 
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+

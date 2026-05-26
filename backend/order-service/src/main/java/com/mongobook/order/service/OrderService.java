@@ -7,12 +7,15 @@ import com.mongobook.order.repository.OrderRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class OrderService {
+    private static final Log logger = LogFactory.getLog(OrderService.class);
     private final OrderRepository orders;
     private final OrderEventPublisher eventPublisher;
 
@@ -22,6 +25,7 @@ public class OrderService {
     }
 
     public List<BookOrder> list(String userId) {
+        logger.info("OrderService.list called with userId=" + userId);
         if (userId == null || userId.isBlank()) {
             return orders.findAll();
         }
@@ -29,10 +33,12 @@ public class OrderService {
     }
 
     public BookOrder get(String id) {
+        logger.info("OrderService.get called with id=" + id);
         return orders.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
     }
 
     public BookOrder create(BookOrder order) {
+        logger.info("OrderService.create called for userId=" + order.getUserId());
         Instant now = Instant.now();
         order.setId(null);
         order.setStatus(OrderStatus.CREATED);
@@ -45,6 +51,7 @@ public class OrderService {
     }
 
     public BookOrder confirm(String id) {
+        logger.info("OrderService.confirm called with id=" + id);
         BookOrder order = get(id);
         order.setStatus(OrderStatus.CONFIRMED);
         order.setUpdatedAt(Instant.now());
@@ -54,6 +61,7 @@ public class OrderService {
     }
 
     public BookOrder cancel(String id) {
+        logger.info("OrderService.cancel called with id=" + id);
         BookOrder order = get(id);
         order.setStatus(OrderStatus.CANCELLED);
         order.setUpdatedAt(Instant.now());
