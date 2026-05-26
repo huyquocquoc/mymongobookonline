@@ -3,9 +3,11 @@ package com.mongobook.book.web;
 import com.mongobook.book.domain.Book;
 import com.mongobook.book.repository.BookRepository;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,12 +34,16 @@ public class BookController {
     }
 
     @GetMapping
-    public List<Book> list(@RequestParam(name = "q", required = false) String q) {
-        logger.info("BookController.list called with q=" + q);
+    public Page<Book> list(
+            @RequestParam(name = "q", required = false) String q,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        logger.info("BookController.list called with q=" + q + " page=" + page + " size=" + size);
+        Pageable pageable = PageRequest.of(page, size);
         if (q == null || q.isBlank()) {
-            return books.findAll();
+            return books.findAll(pageable);
         }
-        return books.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(q, q);
+        return books.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(q, q, pageable);
     }
 
     @GetMapping("/{id}")

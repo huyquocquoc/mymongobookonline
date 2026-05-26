@@ -19,7 +19,7 @@
           <p class="eyebrow">Catalog</p>
           <h2>Books</h2>
         </div>
-        <input type="search" placeholder="Search title or author" [ngModel]="search()" (ngModelChange)="search.set($event); loadBooks()">
+        <input type="search" placeholder="Search title or author" [ngModel]="search()" (ngModelChange)="search.set($event); loadBooks(true)">
       </div>
 
       <div class="book-grid">
@@ -35,6 +35,11 @@
             <button type="button" (click)="addToCart(book)">Add</button>
           </div>
         </article>
+      </div>
+      <div class="load-more-row" *ngIf="page() < totalPages()">
+        <button type="button" class="load-more" (click)="loadMoreBooks()" [disabled]="isLoading()">
+          {{ isLoading() ? 'Loading...' : 'Load more books' }}
+        </button>
       </div>
     </div>
 

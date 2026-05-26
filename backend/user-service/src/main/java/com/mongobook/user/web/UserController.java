@@ -44,8 +44,10 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<AppUser> create(@Valid @RequestBody AppUser user) {
+        logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         logger.info("UserController.create called for username=" + user.getFullName());
         user.setId(null);
+        logger.debug("DEBUGDEBUGDEBUG" + user);
         return ResponseEntity.status(HttpStatus.CREATED).body(users.save(user));
     }
 

@@ -6,5 +6,10 @@ spring:
     name: user-service
   data:
     mongodb:
-      uri: mongodb://root:All4one7!@192.168.1.83:27017/book_users?authSource=admin
+      uri: mongodb://root:password@192.168.1.83:27018/book_users?authSource=admin
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO, DEBUG, ERROR
 

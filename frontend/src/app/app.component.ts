@@ -1,13 +1,15 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
 import { ApiService } from './api.service';
-import { AppUser, Book, BookOrder, OrderItem } from './models';
+import { ErrorService } from './error.service';
+import { AppUser, Book, BookOrder, OrderItem, Page } from './models';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, CurrencyPipe, DatePipe],
+  imports: [CommonModule, FormsModule, CurrencyPipe, DatePipe, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -20,6 +22,9 @@ export class AppComponent implements OnInit {
   readonly search = signal('');
   readonly message = signal('');
   readonly error = signal('');
+  readonly page = signal(0);
+  readonly totalPages = signal(1);
+  readonly isLoading = signal(false);
 
   newBook: Book = {
     isbn: '',
@@ -40,22 +45,40 @@ export class AppComponent implements OnInit {
     this.cart().reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
   );
 
-  constructor(private readonly api: ApiService) {}
+  constructor(private readonly api: ApiService, private readonly errorService: ErrorService) {}
 
   ngOnInit(): void {
     this.refreshAll();
   }
 
   refreshAll(): void {
-    this.loadBooks();
+    this.loadBooks(true);
     this.loadUsers();
     this.loadOrders();
   }
 
-  loadBooks(): void {
-    this.api.listBooks(this.search()).subscribe({
-      next: (books) => this.books.set(books),
-      error: () => this.showError('Unable to load books')
+  loadBooks(reset = false): void {
+    if (reset) {
+      this.page.set(0);
+      this.books.set([]);
+      this.totalPages.set(1);
+    }
+
+    const nextPage = this.page();
+    this.isLoading.set(true);
+    this.api.listBooks(this.search(), nextPage, 10).subscribe({
+      // if good then forward the return  to 
+      next: (page) => {
+        this.books.update((current) => [...current, ...page.content]);
+        this.totalPages.set(page.totalPages);
+        this.page.set(page.number + 1);
+        this.isLoading.set(false);
+      },
+      // if not good then 
+      error: () => {
+        this.showError('Unable to load books');
+        this.isLoading.set(false);
+      }
     });
   }
 
@@ -64,6 +87,13 @@ export class AppComponent implements OnInit {
       next: (users) => this.users.set(users),
       error: () => this.showError('Unable to load users')
     });
+  }
+
+  loadMoreBooks(): void {
+    if (this.isLoading() || this.page() >= this.totalPages()) {
+      return;
+    }
+    this.loadBooks();
   }
 
   loadOrders(): void {
@@ -164,5 +194,11 @@ export class AppComponent implements OnInit {
     this.error.set(message);
     this.message.set('');
   }
-}
+
+  criticalError(message: string, statusCode?: number): void {
+    this.errorService.redirectToError({
+      message,
+      statusCode
+    });
+  }
 
