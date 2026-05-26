@@ -10,11 +10,9 @@
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logs/book-service.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
