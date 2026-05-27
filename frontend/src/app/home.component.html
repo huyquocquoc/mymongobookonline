@@ -1,0 +1,133 @@
+<main class="app-shell">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Event-driven commerce</p>
+      <h1>Mongo Book Online</h1>
+    </div>
+    <button type="button" class="refresh" (click)="refreshAll()" title="Refresh data">Refresh</button>
+  </header>
+
+  <section class="status-row" *ngIf="message() || error()">
+    <p class="success" *ngIf="message()">{{ message() }}</p>
+    <p class="error" *ngIf="error()">{{ error() }}</p>
+  </section>
+
+  <section class="workspace">
+    <div class="panel catalog">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Catalog</p>
+          <h2>Books</h2>
+        </div>
+        <input type="search" placeholder="Search title or author" [ngModel]="search()" (ngModelChange)="search.set($event); loadBooks(true)">
+      </div>
+
+      <div class="book-grid">
+        <article class="book-card" *ngFor="let book of books()">
+          <div>
+            <h3>{{ book.title }}</h3>
+            <p>{{ book.author }}</p>
+            <small>{{ book.isbn }}</small>
+          </div>
+          <div class="book-actions">
+            <strong>{{ book.price | currency }}</strong>
+            <span>{{ book.stockQuantity }} in stock</span>
+            <button type="button" (click)="addToCart(book)">Add</button>
+          </div>
+        </article>
+      </div>
+      <div class="load-more-row" *ngIf="page() < totalPages()">
+        <button type="button" class="load-more" (click)="loadMoreBooks()" [disabled]="isLoading()">
+          {{ isLoading() ? 'Loading...' : 'Load more books' }}
+        </button>
+      </div>
+    </div>
+
+    <aside class="panel order-panel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Checkout</p>
+          <h2>Order</h2>
+        </div>
+      </div>
+
+      <label>
+        Customer
+        <select [ngModel]="selectedUserId()" (ngModelChange)="selectedUserId.set($event)">
+          <option value="">Select user</option>
+          <option *ngFor="let user of users()" [value]="user.id ?? user.email">{{ user.fullName }} - {{ user.email }}</option>
+        </select>
+      </label>
+
+      <div class="cart-list">
+        <div class="cart-item" *ngFor="let item of cart()">
+          <span>{{ item.title }}</span>
+          <input type="number" min="0" [ngModel]="item.quantity" (ngModelChange)="updateQuantity(item, +$event)">
+          <strong>{{ item.quantity * item.unitPrice | currency }}</strong>
+        </div>
+      </div>
+
+      <div class="cart-total">
+        <span>Total</span>
+        <strong>{{ cartTotal() | currency }}</strong>
+      </div>
+      <button type="button" class="primary" (click)="placeOrder()">Place order</button>
+    </aside>
+  </section>
+
+  <section class="forms">
+    <form class="panel form-panel" (ngSubmit)="createBook()">
+      <p class="eyebrow">Inventory</p>
+      <h2>Create Book</h2>
+      <input name="isbn" placeholder="ISBN" [(ngModel)]="newBook.isbn" required>
+      <input name="title" placeholder="Title" [(ngModel)]="newBook.title" required>
+      <input name="author" placeholder="Author" [(ngModel)]="newBook.author" required>
+      <div class="split">
+        <input name="price" type="number" step="0.01" min="0" placeholder="Price" [(ngModel)]="newBook.price" required>
+        <input name="stock" type="number" min="0" placeholder="Stock" [(ngModel)]="newBook.stockQuantity" required>
+      </div>
+      <textarea name="description" placeholder="Description" [(ngModel)]="newBook.description"></textarea>
+      <button type="submit">Create book</button>
+    </form>
+
+    <form class="panel form-panel" (ngSubmit)="createUser()">
+      <p class="eyebrow">Customers</p>
+      <h2>Create User</h2>
+      <input name="email" type="email" placeholder="Email" [(ngModel)]="newUser.email" required>
+      <input name="fullName" placeholder="Full name" [(ngModel)]="newUser.fullName" required>
+      <textarea name="shippingAddress" placeholder="Shipping address" [(ngModel)]="newUser.shippingAddress" required></textarea>
+      <button type="submit">Create user</button>
+    </form>
+  </section>
+
+  <section class="panel orders">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Kafka-backed workflow</p>
+        <h2>Orders</h2>
+      </div>
+    </div>
+
+    <div class="table">
+      <div class="table-row table-head">
+        <span>Order</span>
+        <span>User</span>
+        <span>Total</span>
+        <span>Status</span>
+        <span>Created</span>
+        <span></span>
+      </div>
+      <div class="table-row" *ngFor="let order of orders()">
+        <span>{{ order.id }}</span>
+        <span>{{ order.userId }}</span>
+        <span>{{ order.totalAmount | currency }}</span>
+        <span class="badge">{{ order.status }}</span>
+        <span>{{ order.createdAt | date:'short' }}</span>
+        <span class="row-actions">
+          <button type="button" (click)="confirm(order)" [disabled]="order.status === 'CONFIRMED'">Confirm</button>
+          <button type="button" class="danger" (click)="cancel(order)" [disabled]="order.status === 'CANCELLED'">Cancel</button>
+        </span>
+      </div>
+    </div>
+  </section>
+</main>

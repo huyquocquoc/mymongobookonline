@@ -1,0 +1,26 @@
+<main class="login-shell">
+  <section class="login-panel">
+    <div class="login-header">
+      <p class="eyebrow">Secure access</p>
+      <h1>Sign in</h1>
+      <p class="login-subtitle">Enter your credentials to continue to the Mongo Book Online dashboard.</p>
+    </div>
+
+    <form (ngSubmit)="submit()" #loginForm="ngForm" class="login-form">
+      <label>
+        Email
+        <input type="email" name="email" required [(ngModel)]="email" />
+      </label>
+
+      <label>
+        Password
+        <input type="password" name="password" required minlength="6" [(ngModel)]="password" />
+      </label>
+
+      <p class="form-error" *ngIf="error">{{ error }}</p>
+
+      <button type="submit" [disabled]="loginForm.invalid">Sign in</button>
+      <p class="login-note">This is a demo login page. Authentication is not connected to a backend yet.</p>
+    </form>
+  </section>
+</main>
