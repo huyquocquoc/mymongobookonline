@@ -35,6 +35,10 @@ export class ApiService {
     return this.http.post<BookOrder>('/api/orders', order);
   }
 
+  createCheckout(order: BookOrder): Observable<{ url: string; orderId?: string; error?: string }> {
+    return this.http.post<{ url: string; orderId?: string; error?: string }>('/api/orders/checkout', order);
+  }
+
   confirmOrder(id: string): Observable<BookOrder> {
     return this.http.post<BookOrder>(`/api/orders/${id}/confirm`, {});
   }

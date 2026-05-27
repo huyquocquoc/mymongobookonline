@@ -152,13 +152,18 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    this.api.createOrder({ userId: this.selectedUserId(), items: this.cart() }).subscribe({
-      next: () => {
+    // Create a checkout session on the backend and redirect to Stripe Checkout
+    this.api.createCheckout({ userId: this.selectedUserId(), items: this.cart() }).subscribe({
+      next: (resp) => {
+        if (resp.error) {
+          this.showError(resp.error);
+          return;
+        }
+        // clear cart locally and redirect to Stripe
         this.cart.set([]);
-        this.loadOrders();
-        this.showMessage('Order created and Kafka event published');
+        window.location.href = resp.url;
       },
-      error: () => this.showError('Unable to create order')
+      error: () => this.showError('Unable to create checkout session')
     });
   }
 
