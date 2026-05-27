@@ -25,6 +25,7 @@ export interface OrderItem {
 export interface BookOrder {
   id?: string;
   userId: string;
+  notificationEmail?: string;
   items: OrderItem[];
   totalAmount?: number;
   status?: 'CREATED' | 'CONFIRMED' | 'CANCELLED';
@@ -39,4 +40,3 @@ export interface Page<T> {
   number: number;
   size: number;
 }
-

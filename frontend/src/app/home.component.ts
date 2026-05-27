@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
   readonly page = signal(0);
   readonly totalPages = signal(1);
   readonly isLoading = signal(false);
+  readonly loginEmail = signal(localStorage.getItem('loginEmail') ?? '');
 
   newBook: Book = {
     isbn: '',
@@ -153,7 +154,11 @@ export class HomeComponent implements OnInit {
     }
 
     // Create a checkout session on the backend and redirect to Stripe Checkout
-    this.api.createCheckout({ userId: this.selectedUserId(), items: this.cart() }).subscribe({
+    this.api.createCheckout({
+      userId: this.selectedUserId(),
+      notificationEmail: this.loginEmail() || undefined,
+      items: this.cart()
+    }).subscribe({
       next: (resp) => {
         if (resp.error) {
           this.showError(resp.error);

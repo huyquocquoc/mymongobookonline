@@ -1,0 +1,26 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: notification-service
+  kafka:
+    bootstrap-servers: 192.168.1.83:9092
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.mongobook.notification.event,com.mongobook.order.event,java.util,java.math,java.time
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.mongobook.notification.event.OrderEvent
+
+app:
+  topics:
+    order-events: book.orders.events
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO

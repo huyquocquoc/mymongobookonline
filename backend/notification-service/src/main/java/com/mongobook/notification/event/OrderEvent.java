@@ -1,6 +1,5 @@
-package com.mongobook.order.event;
+package com.mongobook.notification.event;
 
-import com.mongobook.order.domain.OrderItem;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;

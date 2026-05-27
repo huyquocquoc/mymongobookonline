@@ -24,6 +24,7 @@ export class LoginComponent {
     }
 
     this.error = '';
+    localStorage.setItem('loginEmail', this.email.trim());
     this.router.navigate(['/']);
   }
 }

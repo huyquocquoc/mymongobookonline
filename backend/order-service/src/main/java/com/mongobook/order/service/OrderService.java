@@ -60,6 +60,11 @@ public class OrderService {
         return saved;
     }
 
+    public void publishCheckoutStarted(BookOrder order) {
+        logger.info("OrderService.publishCheckoutStarted called for orderId=" + order.getId());
+        eventPublisher.publish(order, OrderEventType.CHECKOUT_STARTED);
+    }
+
     public BookOrder cancel(String id) {
         logger.info("OrderService.cancel called with id=" + id);
         BookOrder order = get(id);
@@ -76,4 +81,3 @@ public class OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
-

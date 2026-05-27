@@ -1,4 +1,4 @@
-package com.mongobook.order.event;
+package com.mongobook.notification.event;
 
 public enum OrderEventType {
     ORDER_CREATED,

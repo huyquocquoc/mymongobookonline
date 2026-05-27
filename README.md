@@ -8,6 +8,7 @@ Enterprise event-driven ecommerce book ordering sample.
 - `backend/book-service`: Spring Boot REST service for books.
 - `backend/user-service`: Spring Boot REST service for users.
 - `backend/order-service`: Spring Boot REST service for ordering, MongoDB persistence, and Kafka events.
+- `backend/notification-service`: Spring Boot Kafka consumer for checkout notifications.
 - Kafka topic: `book.orders.events`.
 - MongoDB: `192.168.1.83:27017`, user `root`.
 
@@ -18,6 +19,7 @@ Enterprise event-driven ecommerce book ordering sample.
 | Book Service | `8081` | `/api/books` |
 | User Service | `8082` | `/api/users` |
 | Order Service | `8083` | `/api/orders` |
+| Notification Service | `8084` | Kafka consumer |
 | Angular Frontend | `4200` | browser app |
 
 ## Prerequisites
@@ -37,7 +39,7 @@ docker compose up -d
 
 ## Run Backend Services
 
-Open three terminals:
+Open four terminals:
 
 ```powershell
 cd backend\book-service
@@ -53,6 +55,13 @@ mvn spring-boot:run
 cd backend\order-service
 mvn spring-boot:run
 ```
+
+```powershell
+cd backend\notification-service
+mvn spring-boot:run
+```
+
+When checkout starts, `order-service` publishes a `CHECKOUT_STARTED` event to Kafka. `notification-service` consumes it and logs the email message addressed to the login email from the checkout request.
 
 ## Run Frontend
 
@@ -83,4 +92,3 @@ Create an order:
 ```powershell
 Invoke-RestMethod -Method Post -Uri http://localhost:8083/api/orders -ContentType application/json -Body '{"userId":"reader@example.com","items":[{"bookId":"9780134685991","title":"Effective Java","quantity":1,"unitPrice":54.99}]}'
 ```
-

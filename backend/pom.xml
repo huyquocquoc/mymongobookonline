@@ -13,6 +13,7 @@
         <module>book-service</module>
         <module>user-service</module>
         <module>order-service</module>
+        <module>notification-service</module>
     </modules>
 
     <properties>
@@ -52,4 +53,3 @@
         </pluginManagement>
     </build>
 </project>
-

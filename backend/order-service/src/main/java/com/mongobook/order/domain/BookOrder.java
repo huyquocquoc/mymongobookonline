@@ -18,6 +18,8 @@ public class BookOrder {
     @NotBlank
     private String userId;
 
+    private String notificationEmail;
+
     @Valid
     @NotEmpty
     private List<OrderItem> items = new ArrayList<>();
@@ -44,6 +46,14 @@ public class BookOrder {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getNotificationEmail() {
+        return notificationEmail;
+    }
+
+    public void setNotificationEmail(String notificationEmail) {
+        this.notificationEmail = notificationEmail;
     }
 
     public List<OrderItem> getItems() {
@@ -86,4 +96,3 @@ public class BookOrder {
         this.updatedAt = updatedAt;
     }
 }
-

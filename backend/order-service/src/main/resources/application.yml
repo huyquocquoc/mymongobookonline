@@ -23,4 +23,5 @@ spring:
 app:
   topics:
     order-events: book.orders.events
-
+  stripe:
+    secret: ""

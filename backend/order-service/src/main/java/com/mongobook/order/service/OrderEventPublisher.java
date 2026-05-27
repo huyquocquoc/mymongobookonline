@@ -27,6 +27,7 @@ public class OrderEventPublisher {
         OrderEvent event = new OrderEvent(
                 order.getId(),
                 order.getUserId(),
+                order.getNotificationEmail(),
                 eventType,
                 order.getItems(),
                 order.getTotalAmount(),
@@ -35,4 +36,3 @@ public class OrderEventPublisher {
         kafkaTemplate.send(topicName, order.getId(), event);
     }
 }
-
