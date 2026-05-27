@@ -29,9 +29,9 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<BookOrder> list(@RequestParam(required = false) String userId) {
-        logger.info("OrderController.list called with userId=" + userId);
-        return orderService.list(userId);
+    public List<BookOrder> list(@RequestParam(name = "q", required = false) String q)  {
+        logger.info("OrderController.list called with q=" + q);
+        return orderService.list(q);
     }
 
     @GetMapping("/{id}")
